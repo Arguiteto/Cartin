@@ -582,6 +582,48 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
 }
 .card.exporting .state{animation:none!important;}
 
+
+.card.exporting{
+  width:420px!important;
+  max-width:420px!important;
+  min-width:420px!important;
+  margin:0!important;
+}
+.card.exporting .state{
+  padding:48px 26px 38px!important;
+}
+.card.exporting #state-idle{
+  min-height:410px!important;
+  padding:72px 30px 58px!important;
+}
+.card.exporting .row-2{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:20px!important;
+}
+.card.exporting .preview-top{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+}
+.card.exporting .stamp-slot{
+  width:108px!important;
+  min-width:108px!important;
+  flex:0 0 108px!important;
+  align-self:auto!important;
+  margin-top:0!important;
+}
+.card.exporting .preview-to-name{
+  font-size:31px!important;
+}
+.card.exporting .preview-msg{
+  font-size:20px!important;
+}
+.card.exporting .preview-from-name{
+  font-size:24px!important;
+}
 @media(max-width:520px){
   body{
     place-items:start center;
@@ -895,6 +937,60 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
     flex-basis:86px;
     align-self:flex-end;
     margin-top:-10px;
+  }
+}
+
+
+
+/* ── CORREÇÃO FINAL DOS BOTÕES DE AÇÃO ── */
+#state-preview .action-row{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  width:100% !important;
+  max-width:286px !important;
+  margin:30px auto 0 !important;
+}
+#state-preview .action-btn{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  height:48px !important;
+  min-height:48px !important;
+  padding:0 18px !important;
+  margin:0 !important;
+  text-align:center !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  border-radius:999px !important;
+  font-size:10px !important;
+  letter-spacing:1.6px !important;
+}
+#state-preview .status{
+  width:100% !important;
+  max-width:286px !important;
+  margin:12px auto 0 !important;
+  padding:0 8px !important;
+  line-height:1.35 !important;
+}
+#state-preview .reset-btn{
+  min-width:180px !important;
+  margin:24px auto 0 !important;
+}
+@media(max-width:380px){
+  #state-preview .action-row,
+  #state-preview .status{
+    max-width:100% !important;
+  }
+  #state-preview .action-btn{
+    height:47px !important;
+    min-height:47px !important;
+    font-size:9px !important;
+    letter-spacing:1.25px !important;
   }
 }
 
@@ -1254,10 +1350,12 @@ async function renderCartaBlob(){
       logging:false,
       width:exportWidth,
       height:exportHeight,
-      windowWidth:exportWidth,
-      windowHeight:exportHeight,
+      windowWidth:1200,
+      windowHeight:Math.max(exportHeight, 900),
       scrollX:0,
-      scrollY:0
+      scrollY:0,
+      x:0,
+      y:0
     });
 
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
