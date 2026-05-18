@@ -750,14 +750,18 @@ async function renderCartaBlob(){
   clone.classList.add('exporting');
   clone.querySelectorAll('[data-export-ignore="true"]').forEach(el => el.remove());
   clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  // IMPORTANTE: não exporte com transform/offscreen.
+  // Em alguns navegadores, especialmente mobile, html2canvas captura só o fundo
+  // quando o elemento está com translateX(-200vw).
   clone.style.position = 'fixed';
   clone.style.left = '0';
   clone.style.top = '0';
   clone.style.width = '420px';
   clone.style.maxWidth = '420px';
   clone.style.margin = '0';
-  clone.style.transform = 'translateX(-200vw)';
+  clone.style.transform = 'none';
   clone.style.pointerEvents = 'none';
+  clone.style.zIndex = '-1';
   clone.style.opacity = '1';
   document.body.appendChild(clone);
 
@@ -772,6 +776,10 @@ async function renderCartaBlob(){
       allowTaint:true,
       logging:false,
       removeContainer:true,
+      scrollX:0,
+      scrollY:0,
+      x:0,
+      y:0,
       width:clone.offsetWidth,
       height:clone.scrollHeight,
       windowWidth:420,
