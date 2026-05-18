@@ -730,12 +730,129 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
   display:block;
 }
 .stamp-badge{
+  display:none !important;
+}
+
+
+/* ── FORMATOS DE SELO ────────────────── */
+.stamp-slot[data-stamp="classico"] .stamp-frame{
+  border-radius:2px;
+}
+.stamp-slot[data-stamp="classico"] .stamp-photo-wrap{
+  aspect-ratio:1/1;
+  border-radius:0;
+}
+
+.stamp-slot[data-stamp="redondo"]{
+  flex-basis:112px;
+  width:112px;
+}
+.stamp-slot[data-stamp="redondo"] .stamp-frame{
+  padding:9px;
+  border-radius:999px;
+}
+.stamp-slot[data-stamp="redondo"] .stamp-frame::before{
+  border-radius:999px;
+}
+.stamp-slot[data-stamp="redondo"] .stamp-photo-wrap{
+  aspect-ratio:1/1;
+  border-radius:999px;
+}
+.stamp-slot[data-stamp="redondo"] .stamp-badge{
+  margin-top:7px;
+  letter-spacing:1.2px;
+}
+
+.stamp-slot[data-stamp="polaroid"]{
+  flex-basis:112px;
+  width:112px;
+}
+.stamp-slot[data-stamp="polaroid"] .stamp-frame{
+  padding:8px 8px 20px;
+  border-radius:3px;
+}
+.stamp-slot[data-stamp="polaroid"] .stamp-frame::before{
+  opacity:.35;
+}
+.stamp-slot[data-stamp="polaroid"] .stamp-photo-wrap{
+  aspect-ratio:1/1;
+  border-radius:2px;
+}
+.stamp-slot[data-stamp="polaroid"] .stamp-badge{
   margin-top:8px;
-  text-align:center;
-  font:800 8px/1.2 var(--font-ui);
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--muted);
+  font-family:var(--font-card);
+  font-size:12px;
+  font-weight:700;
+  font-style:italic;
+  letter-spacing:.4px;
+  text-transform:none;
+}
+
+.stamp-slot[data-stamp="ticket"]{
+  flex-basis:116px;
+  width:116px;
+}
+.stamp-slot[data-stamp="ticket"] .stamp-frame{
+  padding:9px;
+  border-style:dashed;
+  border-radius:12px;
+}
+.stamp-slot[data-stamp="ticket"] .stamp-frame::before{
+  background:
+    radial-gradient(circle at 0 50%, var(--paper) 0 6px, transparent 6.5px) left center/12px 28px repeat-y,
+    radial-gradient(circle at 100% 50%, var(--paper) 0 6px, transparent 6.5px) right center/12px 28px repeat-y;
+  opacity:1;
+}
+.stamp-slot[data-stamp="ticket"] .stamp-photo-wrap{
+  aspect-ratio:4/3;
+  border-radius:8px;
+}
+.stamp-slot[data-stamp="ticket"] .stamp-badge{
+  letter-spacing:1.5px;
+}
+
+.stamp-slot[data-stamp="coracao"]{
+  flex-basis:112px;
+  width:112px;
+}
+.stamp-slot[data-stamp="coracao"] .stamp-frame{
+  padding:10px;
+  border-radius:22px 22px 26px 26px;
+}
+.stamp-slot[data-stamp="coracao"] .stamp-photo-wrap{
+  aspect-ratio:1/1;
+  border-radius:24px;
+}
+.stamp-slot[data-stamp="coracao"] .stamp-photo-wrap::after{
+  content:'♡';
+  position:absolute;
+  right:5px;
+  bottom:1px;
+  color:#fffaf3;
+  text-shadow:0 1px 6px rgba(0,0,0,.45);
+  font-family:Georgia, serif;
+  font-size:26px;
+  line-height:1;
+}
+.stamp-slot[data-stamp="coracao"] .stamp-badge::before{
+  content:'♡ ';
+}
+
+.stamp-slot[data-stamp="vertical"]{
+  flex-basis:96px;
+  width:96px;
+}
+.stamp-slot[data-stamp="vertical"] .stamp-frame{
+  padding:8px;
+  border-radius:4px;
+}
+.stamp-slot[data-stamp="vertical"] .stamp-photo-wrap{
+  aspect-ratio:3/4;
+  border-radius:3px;
+}
+.stamp-slot[data-stamp="vertical"] .stamp-badge{
+  font-size:7.5px;
+  letter-spacing:1.5px;
 }
 
 @media(max-width:520px){
@@ -743,9 +860,19 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
     flex-direction:column;
     align-items:flex-start;
   }
-  .stamp-slot{
+  .stamp-slot,
+  .stamp-slot[data-stamp="redondo"],
+  .stamp-slot[data-stamp="polaroid"],
+  .stamp-slot[data-stamp="ticket"],
+  .stamp-slot[data-stamp="coracao"]{
     width:96px;
     flex-basis:96px;
+    align-self:flex-end;
+    margin-top:-10px;
+  }
+  .stamp-slot[data-stamp="vertical"]{
+    width:86px;
+    flex-basis:86px;
     align-self:flex-end;
     margin-top:-10px;
   }
@@ -802,7 +929,16 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
     <div class="field">
       <label class="field-label" for="f-foto">Foto para selo</label>
       <input class="photo-input" id="f-foto" type="file" accept="image/*" onchange="handlePhotoUpload(event)">
-      <div class="photo-help">O usuário pode importar uma foto e ela aparecerá como um selo de cartão postal na carta.</div>
+      <label class="field-label" for="f-selo" style="margin-top:16px">Formato do selo</label>
+      <select class="field-input" id="f-selo" onchange="setStampStyle(this.value)" aria-label="Escolher formato do selo">
+        <option value="classico">Clássico postal</option>
+        <option value="redondo">Redondo</option>
+        <option value="polaroid">Polaroid</option>
+        <option value="ticket">Ticket</option>
+        <option value="coracao">Coração</option>
+        <option value="vertical">Vertical</option>
+      </select>
+      <div class="photo-help">O usuário pode importar uma foto e escolher o formato do selo na carta.</div>
       <div class="photo-thumb" id="photo-thumb" hidden>
         <img id="photo-thumb-img" alt="Prévia da foto selecionada">
         <button type="button" onclick="clearPhoto()">Remover foto</button>
@@ -837,12 +973,12 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
         <div class="preview-to-name" id="out-para"></div>
       </div>
 
-      <div class="stamp-slot" id="stamp-slot" aria-label="Selo com foto">
+      <div class="stamp-slot" id="stamp-slot" data-stamp="classico" aria-label="Selo com foto">
         <div class="stamp-frame">
           <div class="stamp-photo-wrap">
             <img id="out-photo" alt="Foto no selo postal">
           </div>
-          <div class="stamp-badge">selo postal</div>
+          <div class="stamp-badge" id="stamp-badge"></div>
         </div>
       </div>
     </div>
@@ -869,6 +1005,30 @@ const $ = id => document.getElementById(id);
 
 
 let cartaPhotoData = '';
+let cartaStampStyle = 'classico';
+
+const stampStyleNames = {
+  classico:'',
+  redondo:'selo redondo',
+  polaroid:'foto postal',
+  ticket:'ticket postal',
+  coracao:'selo amor',
+  vertical:'selo vertical'
+};
+
+function setStampStyle(style){
+  cartaStampStyle = stampStyleNames[style] ? style : 'classico';
+  const select = $('f-selo');
+  if(select && select.value !== cartaStampStyle) select.value = cartaStampStyle;
+  updateStampStyle();
+}
+
+function updateStampStyle(){
+  const stampSlot = $('stamp-slot');
+  const badge = $('stamp-badge');
+  if(stampSlot) stampSlot.dataset.stamp = cartaStampStyle;
+  if(badge) badge.textContent = stampStyleNames[cartaStampStyle] || ''; 
+}
 
 function updatePhotoPreview(){
   const thumb = $('photo-thumb');
@@ -876,6 +1036,8 @@ function updatePhotoPreview(){
   const stampSlot = $('stamp-slot');
   const outPhoto = $('out-photo');
   const hasPhoto = !!cartaPhotoData;
+
+  updateStampStyle();
 
   if(thumb) thumb.hidden = !hasPhoto;
   if(stampSlot) stampSlot.classList.toggle('active', hasPhoto);
@@ -998,7 +1160,6 @@ async function html2canvasReady(){
 }
 
 async function renderCartaBlob(){
-  // Garante que a carta já esteja no modo preview antes da captura.
   if(!$('state-preview').classList.contains('active')) goPreview();
 
   if(!await html2canvasReady()){
@@ -1011,57 +1172,55 @@ async function renderCartaBlob(){
   await nextFrame();
 
   const card = $('card');
-  const previousInline = {
-    width: card.style.width,
-    maxWidth: card.style.maxWidth,
-    transform: card.style.transform,
-    margin: card.style.margin
-  };
+  const rect = card.getBoundingClientRect();
+  const exportWidth = Math.ceil(rect.width);
+  const exportHeight = Math.ceil(card.scrollHeight);
+  const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+  const paperColor = getComputedStyle(card).backgroundColor || '#fff3e4';
 
-  // Em vez de clonar e mandar o elemento para fora da tela, captura a carta REAL.
-  // Isso evita PNG vazio no Safari/iPhone/Chrome mobile e no compartilhamento via WhatsApp.
-  card.classList.add('exporting');
-  card.style.width = '420px';
-  card.style.maxWidth = '420px';
-  card.style.transform = 'none';
-  card.style.margin = '0 auto';
+  const canvas = await html2canvas(card, {
+    backgroundColor: paperColor,
+    scale,
+    useCORS:true,
+    allowTaint:false,
+    logging:false,
+    width:exportWidth,
+    height:exportHeight,
+    windowWidth:exportWidth,
+    windowHeight:exportHeight,
+    scrollX:-window.scrollX,
+    scrollY:-window.scrollY,
+    onclone:(clonedDoc)=>{
+      const clonedCard = clonedDoc.getElementById('card');
+      if(!clonedCard) return;
 
-  try{
-    await nextFrame();
-    await nextFrame();
+      clonedDoc.querySelectorAll('[data-export-ignore="true"]').forEach(el=>el.remove());
+      clonedDoc.querySelectorAll('.state').forEach(s=>s.classList.remove('active','animating'));
+      const preview = clonedDoc.getElementById('state-preview');
+      if(preview) preview.classList.add('active');
 
-    const rect = card.getBoundingClientRect();
-    const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
-    const paperColor = getComputedStyle(card).backgroundColor || '#fff3e4';
+      clonedDoc.body.style.display = 'block';
+      clonedDoc.body.style.minHeight = '0';
+      clonedDoc.body.style.padding = '0';
+      clonedDoc.body.style.margin = '0';
+      clonedDoc.body.style.overflow = 'hidden';
+      clonedDoc.documentElement.style.background = paperColor;
+      clonedDoc.body.style.background = paperColor;
 
-    const canvas = await html2canvas(card, {
-      backgroundColor: paperColor,
-      scale,
-      useCORS:true,
-      allowTaint:false,
-      logging:false,
-      width:Math.ceil(rect.width),
-      height:Math.ceil(card.scrollHeight),
-      windowWidth:Math.max(document.documentElement.clientWidth, Math.ceil(rect.width)),
-      windowHeight:Math.max(document.documentElement.clientHeight, Math.ceil(card.scrollHeight)),
-      scrollX:0,
-      scrollY:-window.scrollY,
-      x:rect.left,
-      y:rect.top
-    });
+      clonedCard.classList.add('exporting');
+      clonedCard.style.width = exportWidth + 'px';
+      clonedCard.style.maxWidth = exportWidth + 'px';
+      clonedCard.style.margin = '0';
+      clonedCard.style.transform = 'none';
+      clonedCard.style.boxSizing = 'border-box';
+    }
+  });
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if(!blob) throw new Error('Não foi possível gerar a imagem.');
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('Não foi possível gerar a imagem.');
 
-    const name = safeFileName(currentCarta().para, 'cartinha');
-    return { blob, filename: `cartinha-${name}.png` };
-  } finally {
-    card.classList.remove('exporting');
-    card.style.width = previousInline.width;
-    card.style.maxWidth = previousInline.maxWidth;
-    card.style.transform = previousInline.transform;
-    card.style.margin = previousInline.margin;
-  }
+  const name = safeFileName(currentCarta().para, 'cartinha');
+  return { blob, filename: `cartinha-${name}.png` };
 }
 
 async function downloadImage(){
@@ -1100,20 +1259,39 @@ async function shareWhatsapp(){
       showStatus('Cartinha compartilhada.');
       return;
     }
+
+    // Fallback: alguns navegadores não permitem anexar arquivo direto ao WhatsApp.
+    // Nesses casos, baixamos o PNG, tentamos copiar o texto e abrimos o WhatsApp.
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1500);
+
+    try{
+      if(window.ClipboardItem && navigator.clipboard?.write){
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]);
+      }
+    }catch(_imgErr){}
+
+    try{
+      await navigator.clipboard?.writeText(text);
+    }catch(_txtErr){}
+
+    showStatus('Seu navegador não anexa PNG direto no WhatsApp. O arquivo foi baixado; anexe manualmente no WhatsApp.');
+
+    const waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    const opened = window.open(waUrl, '_blank', 'noopener,noreferrer');
+    if(!opened) window.location.href = waUrl;
   }catch(e){
-    console.warn('Compartilhamento de imagem indisponível, usando texto:', e);
+    console.error(e);
+    showStatus(e?.message || 'Erro ao preparar compartilhamento.');
   }
-
-  try{
-    await navigator.clipboard?.writeText(text);
-    showStatus('Texto copiado. Abrindo WhatsApp...');
-  }catch(_e){
-    showStatus('Abrindo WhatsApp...');
-  }
-
-  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
-  const opened = window.open(url, '_blank', 'noopener,noreferrer');
-  if(!opened) window.location.href = url;
 }
 
 function show(id){
@@ -1139,6 +1317,7 @@ function goPreview(){
   $('out-msg').textContent  = msg;
   $('out-de').textContent   = de;
   $('out-data').textContent = data;
+  setStampStyle($('f-selo')?.value || cartaStampStyle);
   updatePhotoPreview();
 
   show('state-preview');
@@ -1148,11 +1327,13 @@ function goIdle(){
   ['f-para','f-msg','f-de','f-data'].forEach(id=>{
     $(id).value='';
   });
+  setStampStyle('classico');
   clearPhoto();
   show('state-idle');
 }
 
 setTheme(localStorage.getItem('cartinha-theme') || 'bordo');
+setStampStyle('classico');
 updatePhotoPreview();
 </script>
 </body>
