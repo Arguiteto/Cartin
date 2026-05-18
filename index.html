@@ -4,17 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cartinha</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --paper:#f6eedc;
-  --ink:#2c1a0a;
-  --muted:rgba(90,60,30,0.38);
-  --accent:#c4693a;
-  --bg:#100b05;
+  --paper:#fff3e4;
+  --paper-2:#f7e6d0;
+  --ink:#68162a;
+  --ink-soft:#84334a;
+  --muted:#9a5868;
+  --accent:#8a1538;
+  --accent-2:#b55d73;
+  --line:rgba(138,21,56,.26);
+  --decor:rgba(138,21,56,.22);
+  --bg:#16060b;
+  --shadow:rgba(40,5,16,.34);
+  --font-card:'Cormorant Garamond', Georgia, serif;
+  --font-ui:'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 html{
@@ -25,87 +35,214 @@ html{
 body{
   min-height:100vh;
   min-height:100svh;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 32%),
+    radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 36%),
+    var(--bg);
   display:grid;
   place-items:center;
-  font-family:'IBM Plex Mono',monospace;
+  font-family:var(--font-ui);
   overflow-x:hidden;
   overflow-y:auto;
   padding:clamp(12px,4vw,28px);
   -webkit-text-size-adjust:100%;
 }
 
-/* fundo texturizado */
-body::before{
-  content:'';
-  position:fixed;
-  inset:0;
-  background-image:
-    radial-gradient(ellipse 60% 60% at 30% 40%, rgba(90,45,10,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 75% 70%, rgba(60,30,8,0.12) 0%, transparent 70%);
-  pointer-events:none;
+button,input,textarea,select{font:inherit;}
+button,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+
+body[data-theme="bordo"]{
+  --paper:#fff1df;
+  --paper-2:#f4dcc5;
+  --ink:#68162a;
+  --ink-soft:#84334a;
+  --muted:#965267;
+  --accent:#8a1538;
+  --accent-2:#bd6a7d;
+  --line:rgba(138,21,56,.28);
+  --decor:rgba(138,21,56,.24);
+  --bg:#16060b;
+  --shadow:rgba(48,5,17,.38);
 }
 
-button,input,textarea{font:inherit;}
-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+body[data-theme="gatinha"]{
+  --paper:#fff6fb;
+  --paper-2:#ffe0ef;
+  --ink:#711142;
+  --ink-soft:#9b315f;
+  --muted:#a95279;
+  --accent:#e66fa8;
+  --accent-2:#f3a6c8;
+  --line:rgba(230,111,168,.35);
+  --decor:rgba(230,111,168,.28);
+  --bg:#3a0f25;
+  --shadow:rgba(80,12,45,.28);
+}
+
+body[data-theme="halloween"]{
+  --paper:#fff0dc;
+  --paper-2:#ffe0b8;
+  --ink:#3a194c;
+  --ink-soft:#61316d;
+  --muted:#7d526f;
+  --accent:#d95f1a;
+  --accent-2:#7a3da1;
+  --line:rgba(217,95,26,.32);
+  --decor:rgba(58,25,76,.24);
+  --bg:#120817;
+  --shadow:rgba(20,5,28,.45);
+}
+
+body[data-theme="flores"]{
+  --paper:#fff8f0;
+  --paper-2:#f4ead9;
+  --ink:#4c3a1f;
+  --ink-soft:#7b5a35;
+  --muted:#80684c;
+  --accent:#b94c62;
+  --accent-2:#64855b;
+  --line:rgba(185,76,98,.26);
+  --decor:rgba(100,133,91,.22);
+  --bg:#1b2515;
+  --shadow:rgba(25,45,18,.34);
+}
+
+body[data-theme="azulejo"]{
+  --paper:#fffdf4;
+  --paper-2:#e8f2fb;
+  --ink:#143e68;
+  --ink-soft:#285a87;
+  --muted:#51769c;
+  --accent:#1d67a2;
+  --accent-2:#7ab2da;
+  --line:rgba(29,103,162,.32);
+  --decor:rgba(29,103,162,.25);
+  --bg:#081a2c;
+  --shadow:rgba(4,20,38,.42);
+}
 
 /* ── CARD ─────────────────────────────── */
 .card{
-  width:min(400px,100%);
-  max-width:400px;
-  background:var(--paper);
-  border-radius:2px;
+  width:min(420px,100%);
+  max-width:420px;
+  background-color:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:6px;
   position:relative;
   padding:0;
   overflow:hidden;
   box-shadow:
-    0 2px 4px rgba(0,0,0,.25),
-    0 8px 24px rgba(0,0,0,.35),
-    0 24px 64px rgba(0,0,0,.3),
-    inset 0 0 0 0.5px rgba(90,60,20,0.15);
+    0 3px 8px rgba(0,0,0,.24),
+    0 14px 34px var(--shadow),
+    0 34px 90px rgba(0,0,0,.26),
+    inset 0 0 0 1px rgba(255,255,255,.18);
   background-image:
+    linear-gradient(135deg, rgba(255,255,255,.38), transparent 40%),
     repeating-linear-gradient(
       transparent,
-      transparent 27px,
-      rgba(100,70,30,0.07) 28px
+      transparent 29px,
+      color-mix(in srgb, var(--line) 50%, transparent) 30px
     );
   z-index:1;
 }
 
-.card::after{
-  content:'✦';
+.theme-picker{
   position:absolute;
-  bottom:20px;
-  right:24px;
-  font-size:10px;
-  color:rgba(90,60,30,0.12);
-  pointer-events:none;
+  top:12px;
+  right:12px;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:color-mix(in srgb, var(--paper) 88%, white);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:6px 8px 6px 10px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
+.theme-picker label{
+  font:600 9px/1 var(--font-ui);
+  color:var(--muted);
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+}
+.theme-picker select{
+  max-width:122px;
+  border:0;
+  background:transparent;
+  color:var(--ink);
+  outline:none;
+  font-size:11px;
+  font-weight:600;
+}
+
+.theme-decor{
+  position:absolute;
+  left:0;
+  right:0;
+  height:30px;
+  pointer-events:none;
+  z-index:2;
+  color:var(--decor);
+  font-family:var(--font-card);
+  font-size:18px;
+  letter-spacing:10px;
+  text-align:center;
+  line-height:30px;
+}
+.theme-decor.top{top:8px;}
+.theme-decor.bottom{bottom:8px;transform:rotate(180deg);}
+.theme-decor::before{content:'✦ · ✦ · ✦';}
+
+body[data-theme="gatinha"] .theme-decor::before{content:'♡ ୨୧ ♡ ୨୧ ♡';letter-spacing:7px;}
+body[data-theme="halloween"] .theme-decor::before{content:'✦ ☾ ✦ ☽ ✦';letter-spacing:8px;}
+body[data-theme="flores"] .theme-decor::before{content:'✿ ❀ ✿ ❀ ✿';letter-spacing:7px;}
+
+body[data-theme="azulejo"] .card{
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,.55), transparent 42%),
+    radial-gradient(circle at 14px 14px, rgba(29,103,162,.16) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 0 0, transparent 0 12px, rgba(29,103,162,.07) 12.5px 13px, transparent 13.5px),
+    repeating-linear-gradient(transparent, transparent 29px, rgba(29,103,162,.08) 30px);
+  background-size:auto,28px 28px,28px 28px,auto;
+}
+body[data-theme="azulejo"] .theme-decor{
+  height:28px;
+  background:
+    radial-gradient(circle at 14px 14px, rgba(29,103,162,.28) 0 3px, transparent 3.5px),
+    linear-gradient(90deg, rgba(29,103,162,.15), transparent 22%, transparent 78%, rgba(29,103,162,.15));
+  background-size:28px 28px, auto;
+  border-block:1px solid rgba(29,103,162,.20);
+}
+body[data-theme="azulejo"] .theme-decor::before{content:'';}
 
 .corner{
   position:absolute;
-  width:18px;
-  height:18px;
+  width:22px;
+  height:22px;
   border-color:var(--accent);
   border-style:solid;
   pointer-events:none;
-  z-index:2;
+  z-index:3;
 }
-.corner-tl{top:14px;left:14px;border-width:1px 0 0 1px;}
-.corner-tr{top:14px;right:14px;border-width:1px 1px 0 0;}
-.corner-bl{bottom:14px;left:14px;border-width:0 0 1px 1px;}
-.corner-br{bottom:14px;right:14px;border-width:0 1px 1px 0;}
+.corner-tl{top:18px;left:18px;border-width:1.5px 0 0 1.5px;}
+.corner-tr{top:18px;right:18px;border-width:1.5px 1.5px 0 0;}
+.corner-bl{bottom:18px;left:18px;border-width:0 0 1.5px 1.5px;}
+.corner-br{bottom:18px;right:18px;border-width:0 1.5px 1.5px 0;}
 
 /* ── ESTADOS ─────────────────────────── */
 .state{
   display:none;
-  padding:clamp(34px,9vw,52px) clamp(24px,7vw,44px) clamp(32px,8vw,44px);
+  padding:clamp(48px,10vw,62px) clamp(26px,7vw,46px) clamp(38px,8vw,48px);
+  position:relative;
+  z-index:4;
 }
 .state.active{display:block;}
-.state.animating{animation:fadeUp .35s cubic-bezier(.4,0,.2,1) both;}
+.state.animating{animation:fadeUp .28s cubic-bezier(.4,0,.2,1) both;}
 
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(10px);}
+  from{opacity:0;transform:translateY(8px);}
   to{opacity:1;transform:translateY(0);}
 }
 
@@ -115,195 +252,219 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-height:min(380px,calc(100svh - 40px));
-  padding:clamp(42px,10vw,52px) clamp(24px,7vw,44px);
+  min-height:min(410px,calc(100svh - 40px));
+  padding:72px 30px 58px;
 }
 #state-idle.active{display:flex;}
 
 .idle-ornament{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(24px,7vw,30px);
-  color:rgba(90,60,30,0.1);
-  margin-bottom:clamp(28px,9vw,40px);
+  font-family:var(--font-card);
+  font-size:clamp(28px,8vw,36px);
+  color:var(--decor);
+  margin-bottom:clamp(26px,8vw,38px);
   letter-spacing:clamp(8px,3vw,12px);
 }
+.idle-ornament::before{content:'cartinha';font-style:italic;letter-spacing:.04em;}
 
 .plus-btn{
-  width:58px;
-  height:58px;
-  min-width:58px;
-  min-height:58px;
+  width:62px;
+  height:62px;
+  min-width:62px;
+  min-height:62px;
   border-radius:50%;
-  border:1px solid var(--accent);
-  background:transparent;
+  border:1.5px solid var(--accent);
+  background:color-mix(in srgb, var(--paper) 72%, white);
   color:var(--accent);
-  font-size:26px;
-  font-weight:300;
+  font-size:31px;
+  font-weight:400;
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:background .2s, color .2s, transform .15s;
-  font-family:'IBM Plex Mono',monospace;
+  transition:background .2s, color .2s, transform .15s, box-shadow .2s;
+  font-family:var(--font-ui);
   line-height:1;
+  box-shadow:0 10px 28px rgba(0,0,0,.08);
 }
-.plus-btn:hover{background:var(--accent);color:var(--paper);transform:scale(1.05);}
+.plus-btn:hover{background:var(--accent);color:var(--paper);transform:scale(1.04);}
 .plus-btn:active{transform:scale(.97);}
 
 .idle-label{
-  margin-top:14px;
-  font-size:9px;
-  letter-spacing:3px;
+  margin-top:16px;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:2.8px;
   text-transform:uppercase;
-  color:rgba(90,60,30,0.3);
+  color:var(--muted);
 }
 
 /* ── HEADER COMUM ────────────────────── */
 .card-header{
   text-align:center;
-  margin-bottom:clamp(26px,8vw,36px);
+  margin-bottom:clamp(28px,8vw,38px);
   padding-bottom:14px;
-  border-bottom:0.5px solid rgba(90,60,30,0.12);
+  border-bottom:1px solid var(--line);
   position:relative;
 }
 .card-title{
-  font-family:'Playfair Display',serif;
-  font-size:11px;
+  font-family:var(--font-ui);
+  font-size:10px;
+  font-weight:700;
   letter-spacing:4px;
   text-transform:uppercase;
-  color:rgba(90,60,30,0.35);
+  color:var(--muted);
 }
 
 /* ── FORM ────────────────────────────── */
-.field{margin-bottom:20px;}
+.field{margin-bottom:21px;}
 .field-label{
   display:block;
-  font-size:8.5px;
-  letter-spacing:2.5px;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2.4px;
   text-transform:uppercase;
-  color:rgba(90,60,30,0.4);
+  color:var(--muted);
   margin-bottom:7px;
 }
 .field-input,
 .field-textarea{
   width:100%;
   max-width:100%;
-  background:transparent;
+  background:rgba(255,255,255,.16);
   border:none;
-  border-bottom:0.5px solid rgba(90,60,30,0.18);
-  padding:7px 0 9px;
-  font-family:'Playfair Display',serif;
-  font-size:17px;
+  border-bottom:1px solid var(--line);
+  padding:8px 2px 10px;
+  font-family:var(--font-card);
+  font-size:20px;
+  font-weight:600;
   color:var(--ink);
   outline:none;
-  transition:border-color .2s;
+  transition:border-color .2s, background .2s;
   caret-color:var(--accent);
+  border-radius:0;
 }
 .field-input::placeholder,
 .field-textarea::placeholder{
-  color:rgba(90,60,30,0.22);
+  color:color-mix(in srgb, var(--muted) 62%, transparent);
   font-style:italic;
+  font-weight:500;
 }
 .field-input:focus,
-.field-textarea:focus{border-bottom-color:var(--accent);}
+.field-textarea:focus{
+  border-bottom-color:var(--accent);
+  background:rgba(255,255,255,.24);
+}
 
 .field-textarea{
   resize:vertical;
-  min-height:112px;
-  line-height:28px;
+  min-height:122px;
+  line-height:29px;
   font-style:italic;
-  font-size:16px;
+  font-size:19px;
 }
 
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 
 .divider{
-  height:0.5px;
-  background:rgba(90,60,30,0.1);
+  height:1px;
+  background:var(--line);
   margin:24px 0;
 }
 
 .save-btn{
   width:100%;
-  min-height:44px;
+  min-height:46px;
   padding:13px;
-  margin-top:6px;
+  margin-top:8px;
   background:var(--accent);
-  color:var(--paper);
+  color:#fff8f0;
   border:none;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9.5px;
-  letter-spacing:2.5px;
+  border-radius:999px;
+  font-family:var(--font-ui);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2.4px;
   text-transform:uppercase;
   cursor:pointer;
-  transition:opacity .2s,transform .1s;
+  transition:opacity .2s,transform .1s,box-shadow .2s;
+  box-shadow:0 12px 28px color-mix(in srgb, var(--accent) 25%, transparent);
 }
-.save-btn:hover{opacity:.88;}
+.save-btn:hover{opacity:.9;}
 .save-btn:active{transform:scale(.99);}
 
 /* ── PREVIEW ─────────────────────────── */
 .preview-to-label{
-  font-size:8.5px;
-  letter-spacing:2.5px;
+  font-family:var(--font-ui);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:2.8px;
   text-transform:uppercase;
-  color:rgba(90,60,30,0.35);
-  margin-bottom:4px;
+  color:var(--muted);
+  margin-bottom:6px;
 }
 .preview-to-name{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(24px,7vw,26px);
+  font-family:var(--font-card);
+  font-size:clamp(31px,8vw,36px);
+  font-weight:700;
   color:var(--ink);
-  margin-bottom:clamp(22px,7vw,30px);
-  line-height:1.2;
+  margin-bottom:clamp(24px,7vw,32px);
+  line-height:1.08;
   overflow-wrap:anywhere;
 }
 .preview-msg{
-  font-family:'Playfair Display',serif;
+  font-family:var(--font-card);
   font-style:italic;
-  font-size:16px;
-  color:#3d2510;
-  line-height:28px;
+  font-weight:600;
+  font-size:clamp(20px,5.6vw,23px);
+  color:var(--ink-soft);
+  line-height:1.5;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
-  min-height:28px;
-  margin-bottom:clamp(28px,8vw,36px);
+  min-height:32px;
+  margin-bottom:clamp(30px,8vw,40px);
 }
 .preview-from{text-align:right;}
 .preview-from-label{
-  font-size:8.5px;
-  letter-spacing:2.5px;
+  font-family:var(--font-ui);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:2.8px;
   text-transform:uppercase;
-  color:rgba(90,60,30,0.35);
+  color:var(--muted);
 }
 .preview-from-name{
-  font-family:'Playfair Display',serif;
-  font-size:19px;
+  font-family:var(--font-card);
+  font-size:clamp(24px,6vw,27px);
+  font-weight:700;
   color:var(--ink);
-  margin-top:3px;
+  margin-top:4px;
   overflow-wrap:anywhere;
 }
 .preview-date{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;
-  color:rgba(90,60,30,0.3);
-  margin-top:5px;
+  font-family:var(--font-ui);
+  font-size:10px;
+  font-weight:600;
+  color:var(--muted);
+  margin-top:6px;
   letter-spacing:1px;
 }
 
 .reset-btn{
   display:block;
   margin:28px auto 0;
-  background:transparent;
-  border:0.5px solid rgba(90,60,30,0.18);
-  color:rgba(90,60,30,0.38);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:8.5px;
+  background:color-mix(in srgb, var(--paper) 70%, white);
+  border:1px solid var(--line);
+  color:var(--muted);
+  border-radius:999px;
+  font-family:var(--font-ui);
+  font-size:9px;
+  font-weight:700;
   letter-spacing:2px;
   text-transform:uppercase;
   padding:10px 18px;
   min-height:40px;
   cursor:pointer;
-  transition:color .2s,border-color .2s;
+  transition:color .2s,border-color .2s,background .2s;
 }
 .reset-btn:hover{color:var(--accent);border-color:var(--accent);}
 
@@ -311,17 +472,19 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .action-row{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:28px;
+  gap:9px;
+  margin-top:30px;
 }
 .action-btn{
-  min-height:42px;
-  border:0.5px solid rgba(90,60,30,0.18);
-  background:transparent;
-  color:rgba(90,60,30,0.46);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:8.5px;
-  letter-spacing:1.8px;
+  min-height:43px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb, var(--paper) 74%, white);
+  color:var(--muted);
+  border-radius:999px;
+  font-family:var(--font-ui);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.7px;
   text-transform:uppercase;
   padding:10px;
   cursor:pointer;
@@ -332,18 +495,27 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .action-btn.solid{
   background:var(--accent);
   border-color:var(--accent);
-  color:var(--paper);
+  color:#fff8f0;
+  box-shadow:0 12px 28px color-mix(in srgb, var(--accent) 22%, transparent);
 }
-.action-btn.solid:hover{opacity:.88;color:var(--paper);}
+.action-btn.solid:hover{opacity:.9;color:#fff8f0;}
 .status{
   min-height:16px;
   margin-top:10px;
   text-align:center;
-  font-size:8.5px;
-  letter-spacing:1px;
-  color:rgba(90,60,30,0.42);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.5px;
+  color:var(--muted);
 }
 .card.exporting [data-export-ignore="true"]{display:none!important;}
+.card.exporting{
+  width:420px!important;
+  max-width:420px!important;
+  border-radius:6px;
+  box-shadow:none;
+}
+.card.exporting .state{animation:none!important;}
 
 @media(max-width:520px){
   body{
@@ -354,15 +526,22 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
   }
   .card{
     width:100%;
-    max-width:400px;
+    max-width:420px;
     margin:auto 0;
   }
+  .theme-picker{
+    top:10px;
+    right:10px;
+    padding:5px 7px 5px 9px;
+  }
+  .theme-picker label{display:none;}
+  .theme-picker select{max-width:118px;font-size:10.5px;}
   .state{
-    padding:38px 24px 32px;
+    padding:54px 24px 34px;
   }
   #state-idle{
-    min-height:340px;
-    padding:46px 24px;
+    min-height:360px;
+    padding:76px 24px 48px;
   }
   .row-2{
     grid-template-columns:1fr;
@@ -373,27 +552,48 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
   }
   .field-input,
   .field-textarea{
-    font-size:16px;
+    font-size:18px;
   }
+  .field-textarea{min-height:116px;}
 }
 
 @media(max-width:360px){
   body{padding:8px;}
-  .state{padding:34px 20px 28px;}
-  #state-idle{padding:42px 20px;}
-  .corner-tl{top:10px;left:10px;}
-  .corner-tr{top:10px;right:10px;}
-  .corner-bl{bottom:10px;left:10px;}
-  .corner-br{bottom:10px;right:10px;}
+  .state{padding:52px 20px 32px;}
+  #state-idle{padding:76px 20px 46px;}
+  .corner-tl{top:14px;left:14px;}
+  .corner-tr{top:14px;right:14px;}
+  .corner-bl{bottom:14px;left:14px;}
+  .corner-br{bottom:14px;right:14px;}
   .card-title{letter-spacing:3px;}
-  .save-btn,.action-btn{letter-spacing:1.8px;}
+  .save-btn,.action-btn{letter-spacing:1.6px;}
 }
 
+@supports not (color: color-mix(in srgb, red, blue)){
+  body{background:var(--bg);}
+  .card{background-image:repeating-linear-gradient(transparent,transparent 29px,rgba(90,60,30,.08) 30px);}
+  .field-input::placeholder,.field-textarea::placeholder{color:var(--muted);}
+  .save-btn,.action-btn.solid{box-shadow:none;}
+}
 </style>
 </head>
-<body>
+<body data-theme="bordo">
 
 <div class="card" id="card">
+  <div class="theme-decor top" aria-hidden="true"></div>
+  <div class="theme-decor bottom" aria-hidden="true"></div>
+
+  <div class="theme-picker" data-export-ignore="true">
+    <label for="theme-select">Tema</label>
+    <select id="theme-select" onchange="setTheme(this.value)" aria-label="Escolher tema da cartinha">
+      <option value="bordo">Bordô</option>
+      <option value="gatinha">Gatinha</option>
+      <option value="halloween">Halloween</option>
+      <option value="flores">Flores</option>
+      <option value="azulejo">Azulejos</option>
+    </select>
+  </div>
+
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
@@ -401,7 +601,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
   <!-- IDLE -->
   <div id="state-idle" class="state active">
-    <div class="idle-ornament">· · ·</div>
+    <div class="idle-ornament"></div>
     <button class="plus-btn" onclick="goEdit()" aria-label="Escrever nova carta">+</button>
     <span class="idle-label">nova carta</span>
   </div>
@@ -457,7 +657,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
     <div class="action-row" data-export-ignore="true">
       <button class="action-btn solid" onclick="shareWhatsapp()">WhatsApp</button>
-      <button class="action-btn" onclick="downloadJpeg()">Gerar JPEG</button>
+      <button class="action-btn" onclick="downloadImage()">Gerar PNG</button>
     </div>
     <div class="status" id="status" data-export-ignore="true"></div>
     <button class="reset-btn" data-export-ignore="true" onclick="goIdle()">+ nova carta</button>
@@ -465,15 +665,31 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 </div>
 
 <script>
-
 const $ = id => document.getElementById(id);
+
+const themeNames = {
+  bordo:'Bordô',
+  gatinha:'Gatinha',
+  halloween:'Halloween',
+  flores:'Flores',
+  azulejo:'Azulejos'
+};
+
+function setTheme(theme){
+  const chosen = themeNames[theme] ? theme : 'bordo';
+  document.body.dataset.theme = chosen;
+  localStorage.setItem('cartinha-theme', chosen);
+  const select = $('theme-select');
+  if(select && select.value !== chosen) select.value = chosen;
+}
 
 function currentCarta(){
   return {
     para: $('out-para')?.textContent?.trim() || $('f-para')?.value?.trim() || '—',
     msg: $('out-msg')?.textContent?.trim() || $('f-msg')?.value?.trim() || '',
     de: $('out-de')?.textContent?.trim() || $('f-de')?.value?.trim() || '—',
-    data: $('out-data')?.textContent?.trim() || $('f-data')?.value?.trim() || ''
+    data: $('out-data')?.textContent?.trim() || $('f-data')?.value?.trim() || '',
+    theme: themeNames[document.body.dataset.theme] || 'Bordô'
   };
 }
 
@@ -528,33 +744,53 @@ async function renderCartaBlob(){
   await nextFrame();
   await nextFrame();
 
-  const card = $('card');
-  card.classList.add('exporting');
+  const original = $('card');
+  const clone = original.cloneNode(true);
+  clone.id = 'export-card';
+  clone.classList.add('exporting');
+  clone.querySelectorAll('[data-export-ignore="true"]').forEach(el => el.remove());
+  clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  clone.style.position = 'fixed';
+  clone.style.left = '0';
+  clone.style.top = '0';
+  clone.style.width = '420px';
+  clone.style.maxWidth = '420px';
+  clone.style.margin = '0';
+  clone.style.transform = 'translateX(-200vw)';
+  clone.style.pointerEvents = 'none';
+  clone.style.opacity = '1';
+  document.body.appendChild(clone);
 
   try{
-    const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
-    const canvas = await html2canvas(card, {
-      backgroundColor: null,
+    await nextFrame();
+    const scale = Math.min(4, Math.max(3, window.devicePixelRatio || 3));
+    const paperColor = getComputedStyle(clone).backgroundColor || '#fff3e4';
+    const canvas = await html2canvas(clone, {
+      backgroundColor: paperColor,
       scale,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      removeContainer: true
+      useCORS:true,
+      allowTaint:true,
+      logging:false,
+      removeContainer:true,
+      width:clone.offsetWidth,
+      height:clone.scrollHeight,
+      windowWidth:420,
+      windowHeight:clone.scrollHeight
     });
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     if(!blob) throw new Error('Não foi possível gerar a imagem.');
 
     const name = safeFileName(currentCarta().para, 'cartinha');
-    return { blob, filename: `cartinha-${name}.jpg` };
+    return { blob, filename: `cartinha-${name}.png` };
   } finally {
-    card.classList.remove('exporting');
+    clone.remove();
   }
 }
 
-async function downloadJpeg(){
+async function downloadImage(){
   try{
-    showStatus('Gerando JPEG...');
+    showStatus('Gerando imagem...');
     const { blob, filename } = await renderCartaBlob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -564,10 +800,10 @@ async function downloadJpeg(){
     a.click();
     a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 1500);
-    showStatus('JPEG gerado.');
+    showStatus('Imagem gerada.');
   }catch(e){
     console.error(e);
-    showStatus(e?.message || 'Erro ao gerar JPEG.');
+    showStatus(e?.message || 'Erro ao gerar imagem.');
   }
 }
 
@@ -575,9 +811,9 @@ async function shareWhatsapp(){
   const text = buildWhatsappText();
 
   try{
-    showStatus('Preparando...');
+    showStatus('Preparando imagem...');
     const { blob, filename } = await renderCartaBlob();
-    const file = new File([blob], filename, { type:'image/jpeg' });
+    const file = new File([blob], filename, { type:'image/png' });
 
     if(navigator.canShare?.({ files:[file] }) && navigator.share){
       await navigator.share({
@@ -614,29 +850,31 @@ function show(id){
 
 function goEdit(){
   show('state-form');
-  setTimeout(()=>document.getElementById('f-para').focus(), 80);
+  setTimeout(()=>$('f-para').focus(), 80);
 }
 
 function goPreview(){
-  const para = document.getElementById('f-para').value.trim() || '—';
-  const msg  = document.getElementById('f-msg').value.trim();
-  const de   = document.getElementById('f-de').value.trim() || '—';
-  const data = document.getElementById('f-data').value.trim();
+  const para = $('f-para').value.trim() || '—';
+  const msg  = $('f-msg').value.trim();
+  const de   = $('f-de').value.trim() || '—';
+  const data = $('f-data').value.trim();
 
-  document.getElementById('out-para').textContent = para;
-  document.getElementById('out-msg').textContent  = msg;
-  document.getElementById('out-de').textContent   = de;
-  document.getElementById('out-data').textContent = data;
+  $('out-para').textContent = para;
+  $('out-msg').textContent  = msg;
+  $('out-de').textContent   = de;
+  $('out-data').textContent = data;
 
   show('state-preview');
 }
 
 function goIdle(){
   ['f-para','f-msg','f-de','f-data'].forEach(id=>{
-    document.getElementById(id).value='';
+    $(id).value='';
   });
   show('state-idle');
 }
+
+setTheme(localStorage.getItem('cartinha-theme') || 'bordo');
 </script>
 </body>
 </html>
