@@ -525,12 +525,17 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
 /* ── AÇÕES / EXPORTAÇÃO ───────────────── */
 .action-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
   margin-top:30px;
+  align-items:stretch;
+  width:100%;
 }
 .action-btn{
-  min-height:43px;
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  height:46px;
   border:1px solid var(--line);
   background:var(--paper-ui-2);
   color:var(--muted);
@@ -538,11 +543,17 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
   font-family:var(--font-ui);
   font-size:9px;
   font-weight:800;
-  letter-spacing:1.7px;
+  letter-spacing:1.35px;
   text-transform:uppercase;
-  padding:10px;
+  padding:0 10px;
   cursor:pointer;
   transition:color .2s,border-color .2s,background .2s,transform .1s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1;
+  white-space:nowrap;
 }
 .action-btn:hover{color:var(--accent);border-color:var(--accent);}
 .action-btn:active{transform:scale(.99);}
@@ -602,7 +613,15 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
     gap:0;
   }
   .action-row{
-    grid-template-columns:1fr;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:8px;
+  }
+  .action-btn{
+    min-height:44px;
+    height:44px;
+    font-size:8.5px;
+    letter-spacing:1px;
+    padding:0 8px;
   }
   .field-input,
   .field-textarea{
@@ -620,7 +639,8 @@ body[data-theme="azulejo"] .theme-decor::before{content:'';}
   .corner-bl{bottom:14px;left:14px;}
   .corner-br{bottom:14px;right:14px;}
   .card-title{letter-spacing:3px;}
-  .save-btn,.action-btn{letter-spacing:1.6px;}
+  .save-btn{letter-spacing:1.6px;}
+  .action-btn{font-size:8px;letter-spacing:.75px;padding:0 6px;}
 }
 
 
@@ -1191,14 +1211,15 @@ async function renderCartaBlob(){
   await nextFrame();
 
   const card = $('card');
-  const rect = card.getBoundingClientRect();
-  const exportWidth = Math.ceil(rect.width);
+  const exportWidth = 420;
   const paperColor = getComputedStyle(card).backgroundColor || '#fff3e4';
   const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
 
   const stage = getOrCreateExportStage();
   stage.innerHTML = '';
   stage.style.width = exportWidth + 'px';
+  stage.style.minWidth = exportWidth + 'px';
+  stage.style.maxWidth = exportWidth + 'px';
   stage.style.height = 'auto';
 
   const clone = card.cloneNode(true);
@@ -1208,8 +1229,9 @@ async function renderCartaBlob(){
   clone.querySelectorAll('.state').forEach(s=>s.classList.remove('active','animating'));
   const previewClone = clone.querySelector('#state-preview');
   if(previewClone) previewClone.classList.add('active');
-  clone.style.width = exportWidth + 'px';
-  clone.style.maxWidth = exportWidth + 'px';
+  clone.style.setProperty('width', exportWidth + 'px', 'important');
+  clone.style.setProperty('max-width', exportWidth + 'px', 'important');
+  clone.style.setProperty('min-width', exportWidth + 'px', 'important');
   clone.style.margin = '0';
   clone.style.transform = 'none';
   clone.style.boxSizing = 'border-box';
