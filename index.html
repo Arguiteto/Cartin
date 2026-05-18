@@ -1151,6 +1151,25 @@ function nextFrame(){
   return new Promise(resolve => requestAnimationFrame(resolve));
 }
 
+
+function getOrCreateExportStage(){
+  let stage = document.getElementById('export-stage');
+  if(stage) return stage;
+
+  stage = document.createElement('div');
+  stage.id = 'export-stage';
+  stage.style.position = 'fixed';
+  stage.style.left = '0';
+  stage.style.top = '0';
+  stage.style.zIndex = '-1';
+  stage.style.pointerEvents = 'none';
+  stage.style.overflow = 'hidden';
+  stage.style.opacity = '1';
+  stage.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(stage);
+  return stage;
+}
+
 async function html2canvasReady(){
   for(let i=0;i<80;i++){
     if(window.html2canvas) return true;
@@ -1174,53 +1193,59 @@ async function renderCartaBlob(){
   const card = $('card');
   const rect = card.getBoundingClientRect();
   const exportWidth = Math.ceil(rect.width);
-  const exportHeight = Math.ceil(card.scrollHeight);
-  const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
   const paperColor = getComputedStyle(card).backgroundColor || '#fff3e4';
+  const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
 
-  const canvas = await html2canvas(card, {
-    backgroundColor: paperColor,
-    scale,
-    useCORS:true,
-    allowTaint:false,
-    logging:false,
-    width:exportWidth,
-    height:exportHeight,
-    windowWidth:exportWidth,
-    windowHeight:exportHeight,
-    scrollX:-window.scrollX,
-    scrollY:-window.scrollY,
-    onclone:(clonedDoc)=>{
-      const clonedCard = clonedDoc.getElementById('card');
-      if(!clonedCard) return;
+  const stage = getOrCreateExportStage();
+  stage.innerHTML = '';
+  stage.style.width = exportWidth + 'px';
+  stage.style.height = 'auto';
 
-      clonedDoc.querySelectorAll('[data-export-ignore="true"]').forEach(el=>el.remove());
-      clonedDoc.querySelectorAll('.state').forEach(s=>s.classList.remove('active','animating'));
-      const preview = clonedDoc.getElementById('state-preview');
-      if(preview) preview.classList.add('active');
+  const clone = card.cloneNode(true);
+  clone.id = 'export-card';
+  clone.classList.add('exporting');
+  clone.querySelectorAll('[data-export-ignore="true"]').forEach(el=>el.remove());
+  clone.querySelectorAll('.state').forEach(s=>s.classList.remove('active','animating'));
+  const previewClone = clone.querySelector('#state-preview');
+  if(previewClone) previewClone.classList.add('active');
+  clone.style.width = exportWidth + 'px';
+  clone.style.maxWidth = exportWidth + 'px';
+  clone.style.margin = '0';
+  clone.style.transform = 'none';
+  clone.style.boxSizing = 'border-box';
+  clone.style.position = 'relative';
+  clone.style.left = '0';
+  clone.style.top = '0';
+  stage.appendChild(clone);
 
-      clonedDoc.body.style.display = 'block';
-      clonedDoc.body.style.minHeight = '0';
-      clonedDoc.body.style.padding = '0';
-      clonedDoc.body.style.margin = '0';
-      clonedDoc.body.style.overflow = 'hidden';
-      clonedDoc.documentElement.style.background = paperColor;
-      clonedDoc.body.style.background = paperColor;
+  try{
+    await waitForImagesIn(stage);
+    await nextFrame();
+    await nextFrame();
 
-      clonedCard.classList.add('exporting');
-      clonedCard.style.width = exportWidth + 'px';
-      clonedCard.style.maxWidth = exportWidth + 'px';
-      clonedCard.style.margin = '0';
-      clonedCard.style.transform = 'none';
-      clonedCard.style.boxSizing = 'border-box';
-    }
-  });
+    const exportHeight = Math.ceil(clone.scrollHeight);
+    const canvas = await html2canvas(clone, {
+      backgroundColor: paperColor,
+      scale,
+      useCORS:true,
+      allowTaint:false,
+      logging:false,
+      width:exportWidth,
+      height:exportHeight,
+      windowWidth:exportWidth,
+      windowHeight:exportHeight,
+      scrollX:0,
+      scrollY:0
+    });
 
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Não foi possível gerar a imagem.');
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if(!blob) throw new Error('Não foi possível gerar a imagem.');
 
-  const name = safeFileName(currentCarta().para, 'cartinha');
-  return { blob, filename: `cartinha-${name}.png` };
+    const name = safeFileName(currentCarta().para, 'cartinha');
+    return { blob, filename: `cartinha-${name}.png` };
+  } finally {
+    stage.innerHTML = '';
+  }
 }
 
 async function downloadImage(){
