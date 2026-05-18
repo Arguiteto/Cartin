@@ -734,6 +734,7 @@ async function html2canvasReady(){
 }
 
 async function renderCartaBlob(){
+  // Garante que a carta já esteja no modo preview antes da captura.
   if(!$('state-preview').classList.contains('active')) goPreview();
 
   if(!await html2canvasReady()){
@@ -744,46 +745,44 @@ async function renderCartaBlob(){
   await nextFrame();
   await nextFrame();
 
-  const original = $('card');
-  const clone = original.cloneNode(true);
-  clone.id = 'export-card';
-  clone.classList.add('exporting');
-  clone.querySelectorAll('[data-export-ignore="true"]').forEach(el => el.remove());
-  clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
-  // IMPORTANTE: não exporte com transform/offscreen.
-  // Em alguns navegadores, especialmente mobile, html2canvas captura só o fundo
-  // quando o elemento está com translateX(-200vw).
-  clone.style.position = 'fixed';
-  clone.style.left = '0';
-  clone.style.top = '0';
-  clone.style.width = '420px';
-  clone.style.maxWidth = '420px';
-  clone.style.margin = '0';
-  clone.style.transform = 'none';
-  clone.style.pointerEvents = 'none';
-  clone.style.zIndex = '-1';
-  clone.style.opacity = '1';
-  document.body.appendChild(clone);
+  const card = $('card');
+  const previousInline = {
+    width: card.style.width,
+    maxWidth: card.style.maxWidth,
+    transform: card.style.transform,
+    margin: card.style.margin
+  };
+
+  // Em vez de clonar e mandar o elemento para fora da tela, captura a carta REAL.
+  // Isso evita PNG vazio no Safari/iPhone/Chrome mobile e no compartilhamento via WhatsApp.
+  card.classList.add('exporting');
+  card.style.width = '420px';
+  card.style.maxWidth = '420px';
+  card.style.transform = 'none';
+  card.style.margin = '0 auto';
 
   try{
     await nextFrame();
-    const scale = Math.min(4, Math.max(3, window.devicePixelRatio || 3));
-    const paperColor = getComputedStyle(clone).backgroundColor || '#fff3e4';
-    const canvas = await html2canvas(clone, {
+    await nextFrame();
+
+    const rect = card.getBoundingClientRect();
+    const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+    const paperColor = getComputedStyle(card).backgroundColor || '#fff3e4';
+
+    const canvas = await html2canvas(card, {
       backgroundColor: paperColor,
       scale,
       useCORS:true,
-      allowTaint:true,
+      allowTaint:false,
       logging:false,
-      removeContainer:true,
+      width:Math.ceil(rect.width),
+      height:Math.ceil(card.scrollHeight),
+      windowWidth:Math.max(document.documentElement.clientWidth, Math.ceil(rect.width)),
+      windowHeight:Math.max(document.documentElement.clientHeight, Math.ceil(card.scrollHeight)),
       scrollX:0,
-      scrollY:0,
-      x:0,
-      y:0,
-      width:clone.offsetWidth,
-      height:clone.scrollHeight,
-      windowWidth:420,
-      windowHeight:clone.scrollHeight
+      scrollY:-window.scrollY,
+      x:rect.left,
+      y:rect.top
     });
 
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
@@ -792,7 +791,11 @@ async function renderCartaBlob(){
     const name = safeFileName(currentCarta().para, 'cartinha');
     return { blob, filename: `cartinha-${name}.png` };
   } finally {
-    clone.remove();
+    card.classList.remove('exporting');
+    card.style.width = previousInline.width;
+    card.style.maxWidth = previousInline.maxWidth;
+    card.style.transform = previousInline.transform;
+    card.style.margin = previousInline.margin;
   }
 }
 
